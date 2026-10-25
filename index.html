@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Baraat Run - Ruby & Adarsh #RubDarsh Wedding</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Yatra+One&display=swap" rel="stylesheet">
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * {
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: radial-gradient(circle at 50% 20%, #200f38 0%, #0d041a 100%);
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    .font-royal {
+      font-family: 'Cinzel', serif;
+    }
+    .font-festive {
+      font-family: 'Yatra One', cursive;
+    }
+    /* Glow & Shimmer effects */
+    .gold-glow {
+      text-shadow: 0 0 12px rgba(251, 191, 36, 0.7), 0 0 24px rgba(245, 158, 11, 0.4);
+    }
+    .gold-box-glow {
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.35), inset 0 0 15px rgba(251, 191, 36, 0.2);
+    }
+    .star-twinkle {
+      animation: pulse 2.5s infinite ease-in-out;
+    }
+    /* Custom Scrollbar for Settings Modal */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #f59e0b;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen text-slate-100 antialiased">
+
+  <!-- Mobile Simulator Frame (Centering container for Desktop, Fullscreen on Mobile) -->
+  <div id="game-container" class="relative w-full h-[100dvh] max-w-[430px] max-h-[920px] bg-[#120826] overflow-hidden shadow-2xl md:rounded-[36px] md:border-[6px] md:border-[#381c63] flex flex-col justify-between">
+    
+    <!-- Top HUD Overlay -->
+    <header class="absolute top-0 left-0 right-0 z-20 px-3 pt-3 pb-2 bg-gradient-to-b from-[#100520]/95 via-[#100520]/60 to-transparent pointer-events-auto">
+      <div class="flex items-center justify-between gap-2 mb-1.5">
+        <!-- Couple Badge & Lives -->
+        <div class="flex items-center gap-1.5 bg-[#25103f]/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-amber-500/30">
+          <div class="text-[11px] font-bold tracking-wider text-amber-300 font-royal">#RubDarsh</div>
+          <div id="lives-container" class="flex gap-1 ml-1 text-xs text-rose-500">
+            <i class="fa-solid fa-heart animate-pulse"></i>
+            <i class="fa-solid fa-heart animate-pulse"></i>
+            <i class="fa-solid fa-heart animate-pulse"></i>
+          </div>
+        </div>
+
+        <!-- Controls: Audio & Quick Skip -->
+        <div class="flex items-center gap-1.5">
+          <!-- Audio Toggle -->
+          <button id="audio-toggle-btn" class="w-8 h-8 rounded-full bg-[#2a1347]/90 text-amber-300 border border-amber-500/30 flex items-center justify-center shadow-md active:scale-95 transition-transform" title="Toggle Sound">
+            <i id="audio-icon" class="fa-solid fa-volume-high text-xs"></i>
+          </button>
+          
+          <!-- Avatar Settings / Customise photos -->
+          <button id="avatar-modal-btn" class="w-8 h-8 rounded-full bg-[#2a1347]/90 text-amber-300 border border-amber-500/30 flex items-center justify-center shadow-md active:scale-95 transition-transform" title="Customize Face Photos">
+            <i class="fa-solid fa-camera text-xs"></i>
+          </button>
+
+          <!-- Direct Skip Button for Relatives / Quick RSVP -->
+          <button id="skip-btn" class="px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-900 font-bold text-[11px] shadow-md flex items-center gap-1 active:scale-95 transition-all">
+            <span>Invite</span>
+            <i class="fa-solid fa-forward-step text-[9px]"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Distance Progress Bar to Mandap -->
+      <div class="relative w-full bg-[#200d38]/90 rounded-full h-3.5 p-0.5 border border-amber-500/40 shadow-inner flex items-center">
+        <div id="progress-bar-fill" class="h-full bg-gradient-to-r from-amber-500 via-rose-500 to-yellow-300 rounded-full w-[2%] transition-all duration-150 shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
+        <!-- Moving Groom Pin on Progress -->
+        <div id="progress-pin" class="absolute left-[2%] -top-1 -translate-x-1/2 w-5 h-5 bg-amber-400 rounded-full border-2 border-white shadow-md flex items-center justify-center text-[9px] text-[#250d3d]">
+          🕺
+        </div>
+        <!-- Bride Target Marker -->
+        <div class="absolute right-1 -top-1.5 w-6 h-6 rounded-full flex items-center justify-center text-sm filter drop-shadow">
+          👰‍♀️
+        </div>
+      </div>
+
+      <!-- Stats Bar: Score, Rings, Distance -->
+      <div class="flex justify-between items-center px-1 mt-1 text-[11px] text-amber-200/90 font-medium">
+        <div class="flex items-center gap-1">
+          <span class="text-amber-400">💍</span>
+          <span id="hud-rings">0</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <span class="font-royal uppercase tracking-wider text-[10px] text-purple-200">Score</span>
+          <span id="hud-score" class="font-bold text-amber-300">0</span>
+        </div>
+        <div class="flex items-center gap-1 text-[10px] text-amber-300/80">
+          <span id="hud-progress-text">0%</span> to Mandap
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Game Canvas -->
+    <canvas id="gameCanvas" class="w-full h-full block cursor-pointer"></canvas>
+
+    <!-- Start / Ready Screen Overlay -->
+    <div id="start-overlay" class="absolute inset-0 z-30 bg-[#120424]/90 backdrop-blur-sm flex flex-col items-center justify-between p-6 text-center select-none">
+      <div class="pt-8">
+        <div class="inline-block px-3 py-1 bg-amber-500/20 rounded-full border border-amber-500/40 text-amber-300 text-xs tracking-widest uppercase font-semibold mb-2">
+          Wedding Save The Date
+        </div>
+        <h1 class="font-festive text-4xl text-amber-400 gold-glow tracking-wide">
+          Baraat Run!
+        </h1>
+        <p class="font-royal text-sm text-purple-200 mt-1 tracking-widest uppercase">
+          Ruby &amp; Adarsh
+        </p>
+      </div>
+
+      <!-- Character Preview & Mission Card -->
+      <div class="w-full max-w-xs bg-gradient-to-b from-[#25103f] to-[#1a0930] p-4 rounded-2xl border border-amber-500/40 gold-box-glow text-left flex flex-col items-center">
+        <div class="flex items-center justify-center gap-4 my-2">
+          <div class="relative w-16 h-16 rounded-full border-2 border-amber-400 overflow-hidden bg-purple-900 shadow-md flex items-center justify-center">
+            <img id="intro-groom-preview" src="" alt="Adarsh Groom" class="w-full h-full object-cover hidden">
+            <span id="intro-groom-emoji" class="text-3xl">🤴</span>
+            <div class="absolute bottom-0 w-full bg-amber-500 text-[#250d3d] text-[9px] font-bold text-center">Adarsh</div>
+          </div>
+          <div class="text-xl text-rose-400 animate-pulse">❤️</div>
+          <div class="relative w-16 h-16 rounded-full border-2 border-rose-400 overflow-hidden bg-purple-900 shadow-md flex items-center justify-center">
+            <img id="intro-bride-preview" src="" alt="Ruby Bride" class="w-full h-full object-cover hidden">
+            <span id="intro-bride-emoji" class="text-3xl">👰‍♀️</span>
+            <div class="absolute bottom-0 w-full bg-rose-500 text-white text-[9px] font-bold text-center">Ruby</div>
+          </div>
+        </div>
+
+        <p class="text-xs text-purple-200 text-center mt-2 leading-relaxed">
+          The Baraat is on its way! Help Groom <b class="text-amber-300">Adarsh</b> jump over sweets and firecrackers, collect engagement rings, and reach the Mandap to reveal the wedding date!
+        </p>
+
+        <div class="grid grid-cols-2 gap-2 w-full mt-3 text-[11px] text-amber-200/90 bg-[#160726]/60 p-2 rounded-xl">
+          <div class="flex items-center gap-1.5"><span class="text-sm">👆</span> Tap / Space to Jump</div>
+          <div class="flex items-center gap-1.5"><span class="text-sm">✨</span> Tap twice to Double Jump</div>
+          <div class="flex items-center gap-1.5"><span class="text-sm">💍</span> Rings = +10 pts</div>
+          <div class="flex items-center gap-1.5"><span class="text-sm">🎆</span> Dodge Firecrackers</div>
+        </div>
+      </div>
+
+      <!-- Start Action Buttons -->
+      <div class="w-full max-w-xs flex flex-col gap-2.5 pb-4">
+        <button id="start-game-btn" class="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 hover:brightness-110 active:scale-98 rounded-full text-slate-950 font-extrabold text-base tracking-wider uppercase shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2 transition-all">
+          <i class="fa-solid fa-play text-sm"></i>
+          <span>Start Baraat Run</span>
+        </button>
+
+        <button id="direct-invite-btn" class="w-full py-2 bg-transparent hover:bg-white/5 active:scale-95 text-amber-300/80 font-medium text-xs rounded-full border border-amber-500/30 transition-all flex items-center justify-center gap-1.5">
+          <span>Just show me the Wedding Details</span>
+          <i class="fa-solid fa-arrow-right text-[10px]"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Celebration & Save The Date Reveal Card Overlay -->
+    <div id="save-date-overlay" class="absolute inset-0 z-40 bg-[#0e031c]/95 backdrop-blur-md hidden flex-col items-center justify-center p-4 overflow-y-auto select-none">
+      <div class="w-full max-w-sm bg-gradient-to-b from-[#240c3d] via-[#1b0830] to-[#140424] rounded-3xl border-2 border-amber-400/80 p-5 shadow-[0_0_40px_rgba(245,158,11,0.4)] flex flex-col items-center text-center relative overflow-hidden my-auto">
+        
+        <!-- Floral / Festive Corner Accents -->
+        <div class="absolute -top-6 -left-6 w-20 h-20 bg-amber-500/10 rounded-full blur-xl pointer-events-none"></div>
+        <div class="absolute -bottom-6 -right-6 w-20 h-20 bg-rose-500/10 rounded-full blur-xl pointer-events-none"></div>
+        
+        <!-- Header Tag -->
+        <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-rose-500/20 border border-amber-400/50 text-[10px] uppercase font-bold tracking-widest text-amber-300 mb-2">
+          <span>✨</span>
+          <span>Save The Date</span>
+          <span>✨</span>
+        </div>
+
+        <!-- Couple Circular Photos Frame -->
+        <div class="flex items-center justify-center gap-2 my-2 relative">
+          <!-- Groom Avatar -->
+          <div class="relative">
+            <div class="w-16 h-16 rounded-full border-2 border-amber-400 p-0.5 bg-gradient-to-tr from-amber-600 to-yellow-300 shadow-lg overflow-hidden flex items-center justify-center bg-purple-900">
+              <img id="reveal-groom-img" src="" alt="Adarsh" class="w-full h-full object-cover hidden rounded-full">
+              <span id="reveal-groom-emoji" class="text-3xl">🤴</span>
+            </div>
+            <span class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-900 text-[9px] font-black px-1.5 py-0.2 rounded-full">GROOM</span>
+          </div>
+
+          <!-- Garland / Heart Knot -->
+          <div class="flex flex-col items-center px-1">
+            <span class="text-rose-500 text-xl animate-bounce">❤️</span>
+            <span class="text-[10px] text-amber-200/60 font-serif">&amp;</span>
+          </div>
+
+          <!-- Bride Avatar -->
+          <div class="relative">
+            <div class="w-16 h-16 rounded-full border-2 border-rose-400 p-0.5 bg-gradient-to-tr from-rose-500 to-amber-300 shadow-lg overflow-hidden flex items-center justify-center bg-purple-900">
+              <img id="reveal-bride-img" src="" alt="Ruby" class="w-full h-full object-cover hidden rounded-full">
+              <span id="reveal-bride-emoji" class="text-3xl">👰‍♀️</span>
+            </div>
+            <span class="absolute -bottom-1 -right-1 bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full">BRIDE</span>
+          </div>
+        </div>
+
+        <!-- Couple Title -->
+        <h2 class="font-royal text-2xl font-black text-amber-300 gold-glow tracking-wider mt-1">
+          Ruby &amp; Adarsh
+        </h2>
+        <div class="text-[11px] font-bold text-amber-400/90 tracking-widest uppercase mb-2">
+          #RubDarsh
+        </div>
+
+        <p class="text-[11px] text-purple-200 italic max-w-[260px] leading-relaxed">
+          "Together with our families, we joyfully invite you to celebrate our new beginning!"
+        </p>
+
+        <!-- Wedding Dates & Venue Card -->
+        <div class="w-full bg-[#180629]/90 rounded-2xl border border-amber-500/30 p-3 my-3 shadow-inner">
+          <div class="text-[11px] uppercase tracking-wider text-amber-300 font-bold mb-1 flex items-center justify-center gap-1.5">
+            <i class="fa-regular fa-calendar-check text-rose-400"></i>
+            <span>The Auspicious Days</span>
+          </div>
+          <div class="font-royal text-lg font-bold text-white tracking-wide">
+            8th &amp; 9th December 2026
+          </div>
+          <div class="text-xs text-amber-200/90 mt-1 flex items-center justify-center gap-1">
+            <i class="fa-solid fa-location-dot text-rose-500"></i>
+            <span>Udaipur, Rajasthan, India</span>
+          </div>
+          <div class="text-[10px] text-purple-300/80 mt-1">
+            (Formal invitation card &amp; event itinerary to follow)
+          </div>
+        </div>
+
+        <!-- Gameplay Score Summary -->
+        <div id="game-stats-pill" class="flex items-center justify-center gap-3 text-[11px] text-amber-200/80 bg-white/5 px-3 py-1 rounded-full mb-3 border border-white/10">
+          <span>🏁 Score: <b id="final-score" class="text-amber-300">0</b></span>
+          <span>•</span>
+          <span>💍 Collected: <b id="final-rings" class="text-amber-300">0</b></span>
+        </div>
+
+        <!-- Action Buttons: Calendar, WhatsApp, Replay -->
+        <div class="flex flex-col w-full gap-2">
+          <!-- Add to Calendar Button -->
+          <button id="add-calendar-btn" class="w-full py-2.5 px-3 bg-gradient-to-r from-amber-500 to-yellow-400 hover:brightness-110 active:scale-98 rounded-xl text-slate-950 font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-md transition-all">
+            <i class="fa-solid fa-calendar-plus text-sm"></i>
+            <span>Add to Google Calendar</span>
+          </button>
+
+          <!-- WhatsApp Share Button -->
+          <button id="whatsapp-share-btn" class="w-full py-2.5 px-3 bg-[#25D366] hover:bg-[#20ba59] active:scale-98 rounded-xl text-white font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-md transition-all">
+            <i class="fa-brands fa-whatsapp text-base"></i>
+            <span>Share Invite on WhatsApp</span>
+          </button>
+
+          <!-- Secondary Actions -->
+          <div class="flex gap-2 mt-1">
+            <button id="ics-download-btn" class="flex-1 py-2 bg-purple-900/50 hover:bg-purple-800/60 text-purple-200 text-[11px] font-medium rounded-xl border border-purple-500/30 flex items-center justify-center gap-1 active:scale-95 transition-all">
+              <i class="fa-solid fa-download text-[10px]"></i>
+              <span>Apple / .ICS</span>
+            </button>
+            <button id="play-again-btn" class="flex-1 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-semibold rounded-xl border border-amber-500/40 flex items-center justify-center gap-1 active:scale-95 transition-all">
+              <i class="fa-solid fa-rotate-right text-[10px]"></i>
+              <span>Play Again</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Photo Customizer Modal (Allowing Ruby & Adarsh to upload custom cutouts) -->
+    <div id="avatar-modal" class="absolute inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex-col items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-[#1c0b33] rounded-3xl border border-amber-500/50 p-5 shadow-2xl flex flex-col text-left">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-royal text-sm font-bold text-amber-300 flex items-center gap-2">
+            <i class="fa-solid fa-user-pen"></i>
+            <span>Personalize Couple Photos</span>
+          </h3>
+          <button id="close-avatar-modal" class="text-purple-300 hover:text-white p-1">
+            <i class="fa-solid fa-xmark text-base"></i>
+          </button>
+        </div>
+        <p class="text-[11px] text-purple-200/90 mb-4 leading-relaxed">
+          Upload front-facing headshots of the Groom &amp; Bride. The photos will be cropped into circles and placed on top of the in-game running characters!
+        </p>
+
+        <!-- Groom Photo Upload -->
+        <div class="mb-3 bg-[#130624] p-2.5 rounded-xl border border-white/10 flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full overflow-hidden border border-amber-400 bg-purple-950 flex items-center justify-center flex-shrink-0">
+            <img id="settings-groom-preview" src="" class="w-full h-full object-cover hidden">
+            <span id="settings-groom-fallback" class="text-xl">🤴</span>
+          </div>
+          <div class="flex-1">
+            <label class="block text-[11px] font-bold text-amber-300 mb-1">Adarsh (Groom Photo)</label>
+            <input type="file" id="groom-file-input" accept="image/*" class="text-[10px] text-purple-200 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-[10px] file:bg-amber-500 file:text-slate-900 file:font-semibold">
+          </div>
+        </div>
+
+        <!-- Bride Photo Upload -->
+        <div class="mb-4 bg-[#130624] p-2.5 rounded-xl border border-white/10 flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full overflow-hidden border border-rose-400 bg-purple-950 flex items-center justify-center flex-shrink-0">
+            <img id="settings-bride-preview" src="" class="w-full h-full object-cover hidden">
+            <span id="settings-bride-fallback" class="text-xl">👰‍♀️</span>
+          </div>
+          <div class="flex-1">
+            <label class="block text-[11px] font-bold text-rose-300 mb-1">Ruby (Bride Photo)</label>
+            <input type="file" id="bride-file-input" accept="image/*" class="text-[10px] text-purple-200 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-[10px] file:bg-rose-500 file:text-white file:font-semibold">
+          </div>
+        </div>
+
+        <!-- Save / Reset Buttons -->
+        <div class="flex gap-2">
+          <button id="reset-photos-btn" class="flex-1 py-2 text-center text-xs text-purple-300 border border-purple-500/30 rounded-xl hover:bg-white/5 transition-all">
+            Reset to Default
+          </button>
+          <button id="save-photos-btn" class="flex-1 py-2 text-center text-xs font-bold bg-amber-500 text-slate-950 rounded-xl hover:bg-amber-400 transition-all">
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- On-Screen Jump Touch Prompt (for mobile clarity) -->
+    <div id="tap-hint" class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 pointer-events-none opacity-80 transition-opacity flex items-center gap-1.5 px-3 py-1 bg-black/40 backdrop-blur-sm rounded-full border border-white/15 text-[11px] text-amber-200">
+      <span>👆</span>
+      <span>Tap screen to JUMP</span>
+    </div>
+
+    <!-- Toast Notification for Links / Actions -->
+    <div id="toast" class="absolute top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-slate-900/95 text-amber-300 border border-amber-500/50 rounded-full text-xs font-semibold shadow-2xl opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2">
+      Link copied to clipboard!
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * BARAAT RUN - Interactive HTML5 Wedding Game
+     * Couple: Ruby & Adarsh (#RubDarsh)
+     * Dates: 8th & 9th December 2026 | Udaipur, Rajasthan
+     */
+
+    // --- Audio Synthesizer via Web Audio API (Zero External Assets) ---
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+        this.bgmPlaying = false;
+        this.bgmTimer = null;
+        this.noteIndex = 0;
+        
+        // Jubilant Indian festive/chiptune melody loop (Shehnai/Dhol inspired wedding scale)
+        // [frequency in Hz, duration in seconds]
+        this.weddingMelody = [
+          [587.33, 0.2], [659.25, 0.2], [739.99, 0.2], [880.00, 0.4],
+          [739.99, 0.2], [659.25, 0.2], [739.99, 0.3], [587.33, 0.4],
+          [440.00, 0.2], [587.33, 0.2], [659.25, 0.2], [739.99, 0.3],
+          [659.25, 0.2], [587.33, 0.2], [554.37, 0.2], [587.33, 0.5]
+        ];
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playJump() {
+        if (this.muted || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          const now = this.ctx.currentTime;
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.exponentialRampToValueAtTime(650, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.17);
+        } catch (e) {
+          console.warn("Audio error:", e);
+        }
+      }
+
+      playCollect() {
+        if (this.muted || !this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          [784, 1046].forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            const noteTime = now + (idx * 0.08);
+            osc.frequency.setValueAtTime(freq, noteTime);
+            gain.gain.setValueAtTime(0.25, noteTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.12);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(noteTime);
+            osc.stop(noteTime + 0.13);
+          });
+        } catch (e) {}
+      }
+
+      playHurt() {
+        if (this.muted || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          const now = this.ctx.currentTime;
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(110, now + 0.2);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.21);
+        } catch (e) {}
+      }
+
+      playFanfare() {
+        if (this.muted || !this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          const chords = [523.25, 659.25, 783.99, 1046.50];
+          chords.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            const noteTime = now + (idx * 0.12);
+            osc.frequency.setValueAtTime(freq, noteTime);
+            gain.gain.setValueAtTime(0.3, noteTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.6);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(noteTime);
+            osc.stop(noteTime + 0.65);
+          });
+        } catch (e) {}
+      }
+
+      startBGM() {
+        if (this.bgmPlaying || this.muted) return;
+        this.bgmPlaying = true;
+        this.noteIndex = 0;
+        this.playNextBgmNote();
+      }
+
+      stopBGM() {
+        this.bgmPlaying = false;
+        if (this.bgmTimer) clearTimeout(this.bgmTimer);
+      }
+
+      playNextBgmNote() {
+        if (!this.bgmPlaying || this.muted || !this.ctx) return;
+        try {
+          const [freq, dur] = this.weddingMelody[this.noteIndex];
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          const now = this.ctx.currentTime;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + dur - 0.02);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + dur);
+
+          this.noteIndex = (this.noteIndex + 1) % this.weddingMelody.length;
+          this.bgmTimer = setTimeout(() => this.playNextBgmNote(), dur * 1000);
+        } catch (e) {
+          this.bgmTimer = setTimeout(() => this.playNextBgmNote(), 250);
+        }
+      }
+
+      toggleMute() {
+        this.muted = !this.muted;
+        if (this.muted) {
+          this.stopBGM();
+        } else {
+          this.init();
+          this.startBGM();
+        }
+        return this.muted;
+      }
+    }
+
+    const sound = new SoundEngine();
+
+    // --- Game Engine & State ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('game-container');
+
+    // UI elements
+    const hudScore = document.getElementById('hud-score');
+    const hudRings = document.getElementById('hud-rings');
+    const hudProgressText = document.getElementById('hud-progress-text');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const progressPin = document.getElementById('progress-pin');
+    const livesContainer = document.getElementById('lives-container');
+    const startOverlay = document.getElementById('start-overlay');
+    const saveDateOverlay = document.getElementById('save-date-overlay');
+    const startGameBtn = document.getElementById('start-game-btn');
+    const directInviteBtn = document.getElementById('direct-invite-btn');
+    const skipBtn = document.getElementById('skip-btn');
+    const playAgainBtn = document.getElementById('play-again-btn');
+    const audioToggleBtn = document.getElementById('audio-toggle-btn');
+    const audioIcon = document.getElementById('audio-icon');
+    const addCalendarBtn = document.getElementById('add-calendar-btn');
+    const icsDownloadBtn = document.getElementById('ics-download-btn');
+    const whatsappShareBtn = document.getElementById('whatsapp-share-btn');
+    const tapHint = document.getElementById('tap-hint');
+    const toast = document.getElementById('toast');
+
+    // Photo Customizer Elements
+    const avatarModalBtn = document.getElementById('avatar-modal-btn');
+    const avatarModal = document.getElementById('avatar-modal');
+    const closeAvatarModal = document.getElementById('close-avatar-modal');
+    const groomFileInput = document.getElementById('groom-file-input');
+    const brideFileInput = document.getElementById('bride-file-input');
+    const savePhotosBtn = document.getElementById('save-photos-btn');
+    const resetPhotosBtn = document.getElementById('reset-photos-btn');
+
+    // Avatars
+    let customGroomImg = null;
+    let customBrideImg = null;
+
+    // Toast helper
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.remove('opacity-0', '-translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', '-translate-y-2');
+      }, 2400);
+    }
+
+    // Set dynamic canvas resolution (Fixed logical 360 x 640 viewport)
+    const VIEW_WIDTH = 360;
+    const VIEW_HEIGHT = 640;
+    let scaleRatio = 1;
+
+    function resizeCanvas() {
+      const rect = container.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      scaleRatio = rect.width / VIEW_WIDTH;
+      ctx.imageSmoothingEnabled = true;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Game variables
+    const GROUND_Y = 530;
+    const TOTAL_RUN_DISTANCE = 4200; // ~30-40 seconds of casual fun
+    let gameRunning = false;
+    let gameEnded = false;
+    let distanceTraveled = 0;
+    let score = 0;
+    let ringsCollected = 0;
+    let lives = 3;
+    let speed = 4.2;
+    let invulnerableTimer = 0;
+
+    // Groom Player Object
+    const player = {
+      x: 60,
+      y: GROUND_Y - 55,
+      width: 42,
+      height: 56,
+      vy: 0,
+      gravity: 0.58,
+      jumpForce: -11.6,
+      isGrounded: true,
+      jumpsRemaining: 2,
+      runFrame: 0,
+      runTimer: 0,
+      reset() {
+        this.y = GROUND_Y - 55;
+        this.vy = 0;
+        this.isGrounded = true;
+        this.jumpsRemaining = 2;
+        this.runFrame = 0;
+      },
+      jump() {
+        if (this.jumpsRemaining > 0) {
+          this.vy = this.jumpForce;
+          this.jumpsRemaining--;
+          this.isGrounded = false;
+          sound.playJump();
+          createJumpDust(this.x + 15, this.y + this.height);
+        }
+      },
+      update() {
+        this.vy += this.gravity;
+        this.y += this.vy;
+
+        if (this.y >= GROUND_Y - this.height) {
+          this.y = GROUND_Y - this.height;
+          this.vy = 0;
+          this.isGrounded = true;
+          this.jumpsRemaining = 2;
+        }
+
+        // Run cycle
+        this.runTimer++;
+        if (this.runTimer % 6 === 0) {
+          this.runFrame = (this.runFrame + 1) % 4;
+        }
+      }
+    };
+
+    // Particles, Rings, Obstacles, Popups, Background elements
+    let particles = [];
+    let obstacles = [];
+    let collectibles = [];
+    let floatingTexts = [];
+    let stars = [];
+    let skyline = [];
+    let mandapReached = false;
+    let mandapX = VIEW_WIDTH + 100;
+
+    // Pre-generate stars for smooth parallax
+    for (let i = 0; i < 45; i++) {
+      stars.push({
+        x: Math.random() * VIEW_WIDTH,
+        y: Math.random() * 260,
+        size: Math.random() * 1.8 + 0.6,
+        alpha: Math.random() * 0.7 + 0.3,
+        twinkleSpeed: Math.random() * 0.03 + 0.01
+      });
+    }
+
+    // Pre-generate royal palace / city skyline silhouettes
+    for (let i = 0; i < 14; i++) {
+      skyline.push({
+        x: i * 35,
+        width: 32 + (i % 3) * 6,
+        height: 80 + (i % 4) * 25,
+        dome: i % 2 === 0
+      });
+    }
+
+    // Particle FX Helper
+    function createJumpDust(x, y) {
+      for (let i = 0; i < 6; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 2.5,
+          vy: -Math.random() * 2,
+          radius: Math.random() * 3 + 1,
+          color: 'rgba(251, 191, 36, 0.7)',
+          life: 18
+        });
+      }
+    }
+
+    function createSparkles(x, y, color = '#fbbf24') {
+      for (let i = 0; i < 9; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 5,
+          vy: (Math.random() - 0.5) * 5,
+          radius: Math.random() * 3.5 + 1.5,
+          color: color,
+          life: 25
+        });
+      }
+    }
+
+    function addFloatingScore(x, y, text, color = '#fef08a') {
+      floatingTexts.push({
+        x: x,
+        y: y,
+        text: text,
+        color: color,
+        life: 35,
+        vy: -1.2
+      });
+    }
+
+    // Obstacle Generator (Cute Laddoo sweets, Firecracker rockets, Festive drums)
+    let obstacleCooldown = 0;
+    function spawnWorldElements() {
+      if (mandapReached) return;
+
+      obstacleCooldown--;
+      if (obstacleCooldown <= 0 && distanceTraveled < TOTAL_RUN_DISTANCE - 400) {
+        const rand = Math.random();
+        
+        // Spawn Obstacle
+        if (rand > 0.45) {
+          const type = Math.random() > 0.5 ? 'laddoo' : 'patakha';
+          obstacles.push({
+            x: VIEW_WIDTH + 30,
+            y: type === 'laddoo' ? GROUND_Y - 28 : GROUND_Y - 34,
+            width: type === 'laddoo' ? 26 : 24,
+            height: type === 'laddoo' ? 26 : 34,
+            type: type,
+            passed: false,
+            rotation: 0
+          });
+          obstacleCooldown = Math.floor(Math.random() * 55 + 75); // Forgiving gaps
+        } 
+        // Spawn Ring Collectibles
+        else {
+          const spawnY = Math.random() > 0.4 ? GROUND_Y - 45 : GROUND_Y - 110;
+          const count = Math.random() > 0.6 ? 3 : 2;
+          for (let i = 0; i < count; i++) {
+            collectibles.push({
+              x: VIEW_WIDTH + 20 + (i * 32),
+              y: spawnY,
+              width: 22,
+              height: 22,
+              type: 'ring',
+              collected: false,
+              bobOffset: i * 0.4
+            });
+          }
+          obstacleCooldown = 50;
+        }
+      }
+    }
+
+    // Input handlers
+    function handleJumpAction(e) {
+      if (e) {
+        // Prevent default for spacebar
+        if (e.code === 'Space') e.preventDefault();
+      }
+
+      if (!gameRunning) return;
+      if (mandapReached) return;
+
+      sound.init();
+      sound.startBGM();
+      player.jump();
+
+      // Hide tap prompt on first jump
+      if (tapHint.style.opacity !== '0') {
+        tapHint.style.opacity = '0';
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
+        handleJumpAction(e);
+      }
+    });
+
+    canvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      handleJumpAction(e);
+    });
+
+    // Update HUD display
+    function updateHUD() {
+      hudScore.textContent = score;
+      hudRings.textContent = ringsCollected;
+
+      const progress = Math.min(100, Math.floor((distanceTraveled / TOTAL_RUN_DISTANCE) * 100));
+      hudProgressText.textContent = `${progress}%`;
+      progressBarFill.style.width = `${progress}%`;
+      progressPin.style.left = `${Math.min(94, Math.max(3, progress))}%`;
+
+      // Update Lives UI
+      let livesHTML = '';
+      for (let i = 0; i < 3; i++) {
+        if (i < lives) {
+          livesHTML += '<i class="fa-solid fa-heart text-rose-500 animate-pulse"></i>';
+        } else {
+          livesHTML += '<i class="fa-regular fa-heart text-purple-400/40"></i>';
+        }
+      }
+      livesContainer.innerHTML = livesHTML;
+    }
+
+    // Trigger Save The Date Finale
+    function triggerSaveTheDate() {
+      gameRunning = false;
+      gameEnded = true;
+      sound.playFanfare();
+
+      // Launch Confetti Cannons
+      const endConfetti = Date.now() + 3.5 * 1000;
+      const colors = ['#f59e0b', '#ec4899', '#fbbf24', '#e11d48', '#8b5cf6'];
+      (function frame() {
+        confetti({
+          particleCount: 4,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0.1, y: 0.6 },
+          colors: colors
+        });
+        confetti({
+          particleCount: 4,
+          angle: 120,
+          spread: 55,
+          origin: { x: 0.9, y: 0.6 },
+          colors: colors
+        });
+        if (Date.now() < endConfetti) {
+          requestAnimationFrame(frame);
+        }
+      })();
+
+      // Populate Finale Card Data
+      document.getElementById('final-score').textContent = score;
+      document.getElementById('final-rings').textContent = ringsCollected;
+
+      setTimeout(() => {
+        saveDateOverlay.classList.remove('hidden');
+        saveDateOverlay.classList.add('flex');
+      }, 700);
+    }
+
+    // Main Update Loop
+    function update() {
+      if (!gameRunning) return;
+
+      distanceTraveled += speed;
+      score += 1;
+
+      // Invulnerability tick
+      if (invulnerableTimer > 0) invulnerableTimer--;
+
+      player.update();
+
+      // Check if distance finished -> Mandap Stage
+      if (distanceTraveled >= TOTAL_RUN_DISTANCE && !mandapReached) {
+        mandapReached = true;
+        mandapX = VIEW_WIDTH + 80;
+      }
+
+      if (mandapReached) {
+        if (mandapX > 160) {
+          mandapX -= speed * 0.9;
+        } else {
+          // Groom reached Bride! Stop and celebrate
+          speed = 0;
+          player.x = Math.min(player.x + 1.2, mandapX - 10);
+          if (!gameEnded) {
+            triggerSaveTheDate();
+          }
+        }
+      }
+
+      // Parallax Stars
+      stars.forEach(star => {
+        star.alpha += star.twinkleSpeed;
+        if (star.alpha > 1 || star.alpha < 0.2) star.twinkleSpeed = -star.twinkleSpeed;
+      });
+
+      // Skyline parallax scroll
+      skyline.forEach(b => {
+        b.x -= speed * 0.2;
+        if (b.x + b.width < 0) {
+          b.x = VIEW_WIDTH + Math.random() * 20;
+        }
+      });
+
+      spawnWorldElements();
+
+      // Update Obstacles
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const obs = obstacles[i];
+        obs.x -= speed;
+        obs.rotation += 0.08;
+
+        // Bounding Box Collision with Player
+        if (
+          invulnerableTimer === 0 &&
+          player.x + 8 < obs.x + obs.width &&
+          player.x + player.width - 8 > obs.x &&
+          player.y + 10 < obs.y + obs.height &&
+          player.y + player.height > obs.y + 4
+        ) {
+          // Hurt Groom
+          lives--;
+          invulnerableTimer = 65; // ~1 second invincibility
+          sound.playHurt();
+          createSparkles(obs.x, obs.y, '#f43f5e');
+          addFloatingScore(player.x, player.y - 10, '-1 Heart 💔', '#f43f5e');
+
+          // Forgiving mechanics: Lives don't game-over wedding guests!
+          if (lives <= 0) {
+            lives = 1; // Keep them playing happily!
+          }
+        }
+
+        // Cleanup
+        if (obs.x + obs.width < -30) {
+          obstacles.splice(i, 1);
+        }
+      }
+
+      // Update Collectibles (Rings)
+      for (let i = collectibles.length - 1; i >= 0; i--) {
+        const item = collectibles[i];
+        item.x -= speed;
+
+        // Collision check
+        if (
+          !item.collected &&
+          player.x < item.x + item.width &&
+          player.x + player.width > item.x &&
+          player.y < item.y + item.height &&
+          player.y + player.height > item.y
+        ) {
+          item.collected = true;
+          ringsCollected++;
+          score += 20;
+          sound.playCollect();
+          createSparkles(item.x, item.y, '#fde047');
+          addFloatingScore(item.x, item.y - 12, '+10 💍', '#fde047');
+          collectibles.splice(i, 1);
+          continue;
+        }
+
+        if (item.x + item.width < -30) {
+          collectibles.splice(i, 1);
+        }
+      }
+
+      // Update Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+
+      // Update Floating Score Popups
+      for (let i = floatingTexts.length - 1; i >= 0; i--) {
+        const ft = floatingTexts[i];
+        ft.y += ft.vy;
+        ft.life--;
+        if (ft.life <= 0) {
+          floatingTexts.splice(i, 1);
+        }
+      }
+
+      updateHUD();
+    }
+
+    // --- Render Loop ---
+    function draw() {
+      ctx.save();
+      ctx.scale(canvas.width / VIEW_WIDTH, canvas.height / VIEW_HEIGHT);
+
+      // 1. Festive Night Sky Gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, VIEW_HEIGHT);
+      skyGrad.addColorStop(0, '#130426');
+      skyGrad.addColorStop(0.55, '#290f48');
+      skyGrad.addColorStop(1, '#4c1763');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+
+      // 2. Stars
+      stars.forEach(s => {
+        ctx.fillStyle = `rgba(255, 240, 200, ${s.alpha})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 3. Glowing Royal Moon
+      const moonX = VIEW_WIDTH - 65;
+      const moonY = 85;
+      const moonGlow = ctx.createRadialGradient(moonX, moonY, 10, moonX, moonY, 40);
+      moonGlow.addColorStop(0, 'rgba(254, 243, 199, 0.9)');
+      moonGlow.addColorStop(0.5, 'rgba(251, 191, 36, 0.25)');
+      moonGlow.addColorStop(1, 'rgba(251, 191, 36, 0)');
+      ctx.fillStyle = moonGlow;
+      ctx.beginPath();
+      ctx.arc(moonX, moonY, 40, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fffbeb';
+      ctx.beginPath();
+      ctx.arc(moonX, moonY, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Crescent shadow on moon
+      ctx.fillStyle = '#22093d';
+      ctx.beginPath();
+      ctx.arc(moonX - 7, moonY - 4, 15, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 4. City Skyline / Palaces Silhouette
+      skyline.forEach(b => {
+        ctx.fillStyle = 'rgba(22, 6, 43, 0.85)';
+        ctx.fillRect(b.x, GROUND_Y - b.height, b.width, b.height);
+        if (b.dome) {
+          ctx.beginPath();
+          ctx.arc(b.x + b.width / 2, GROUND_Y - b.height, b.width / 2.2, Math.PI, 0);
+          ctx.fill();
+          // Kalash finial tip
+          ctx.fillRect(b.x + b.width / 2 - 1.5, GROUND_Y - b.height - 10, 3, 10);
+        }
+      });
+
+      // 5. Hanging Fairy Lights Bunting
+      drawFairyLights();
+
+      // 6. Ground & Festive Brick Pathway
+      drawFestiveGround();
+
+      // 7. Wedding Mandap (Finale Destination)
+      if (mandapReached || distanceTraveled > TOTAL_RUN_DISTANCE - 300) {
+        drawMandap(mandapX, GROUND_Y);
+      }
+
+      // 8. Obstacles (Laddoo & Patakha)
+      obstacles.forEach(obs => drawObstacle(obs));
+
+      // 9. Collectibles (Golden Engagement Rings)
+      collectibles.forEach(item => drawRing(item));
+
+      // 10. Groom Player (Sherwani & Turban with Photo Head)
+      drawGroom(player.x, player.y, player.width, player.height, player.runFrame);
+
+      // 11. Particles & Floating Popups
+      particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      floatingTexts.forEach(ft => {
+        ctx.font = 'bold 13px Outfit, sans-serif';
+        ctx.fillStyle = ft.color;
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 4;
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.shadowBlur = 0;
+      });
+
+      ctx.restore();
+    }
+
+    // Drawing Helpers
+    function drawFairyLights() {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, 120);
+      ctx.quadraticCurveTo(VIEW_WIDTH / 2, 145, VIEW_WIDTH, 120);
+      ctx.stroke();
+
+      const numBulbs = 14;
+      const colors = ['#fde047', '#fb7185', '#38bdf8', '#4ade80', '#fb923c'];
+      for (let i = 0; i <= numBulbs; i++) {
+        const t = i / numBulbs;
+        const bx = t * VIEW_WIDTH;
+        const by = (1 - t) * (1 - t) * 120 + 2 * (1 - t) * t * 145 + t * t * 120;
+        const c = colors[i % colors.length];
+
+        ctx.fillStyle = c;
+        ctx.beginPath();
+        ctx.arc(bx, by + 3, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Glow
+        ctx.fillStyle = 'rgba(254, 240, 138, 0.3)';
+        ctx.beginPath();
+        ctx.arc(bx, by + 3, 7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function drawFestiveGround() {
+      // Grass / Marigold Trim
+      ctx.fillStyle = '#1e3a1d';
+      ctx.fillRect(0, GROUND_Y, VIEW_WIDTH, 10);
+
+      // Marigold flower border
+      const marigoldCount = Math.ceil(VIEW_WIDTH / 14);
+      for (let i = 0; i < marigoldCount; i++) {
+        const mx = (i * 14 - (distanceTraveled % 14));
+        ctx.fillStyle = i % 2 === 0 ? '#f59e0b' : '#ea580c';
+        ctx.beginPath();
+        ctx.arc(mx, GROUND_Y + 5, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Royal Brick Base
+      const groundGrad = ctx.createLinearGradient(0, GROUND_Y + 10, 0, VIEW_HEIGHT);
+      groundGrad.addColorStop(0, '#78222a');
+      groundGrad.addColorStop(1, '#420b12');
+      ctx.fillStyle = groundGrad;
+      ctx.fillRect(0, GROUND_Y + 10, VIEW_WIDTH, VIEW_HEIGHT - GROUND_Y);
+
+      // Brick pattern lines
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.2)';
+      ctx.lineWidth = 1.2;
+      const rowHeight = 18;
+      const offset = (distanceTraveled * 1.0) % 36;
+      for (let y = GROUND_Y + 10; y < VIEW_HEIGHT; y += rowHeight) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(VIEW_WIDTH, y);
+        ctx.stroke();
+
+        const isOdd = Math.floor((y - GROUND_Y) / rowHeight) % 2 === 1;
+        const startX = isOdd ? -offset + 18 : -offset;
+        for (let x = startX; x < VIEW_WIDTH + 36; x += 36) {
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x, y + rowHeight);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw Groom Character
+    function drawGroom(x, y, w, h, frame) {
+      ctx.save();
+
+      // Invulnerability flicker
+      if (invulnerableTimer > 0 && Math.floor(invulnerableTimer / 4) % 2 === 0) {
+        ctx.globalAlpha = 0.4;
+      }
+
+      // Body (Sherwani with golden embroidery)
+      const legOffset = (frame === 1 || frame === 3) ? 5 : 0;
+      
+      // Legs (Pajama / Churidar)
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(x + 10, y + 36, 7, 18 - legOffset);
+      ctx.fillRect(x + 24, y + 36, 7, 18 + legOffset);
+
+      // Traditional Jutti Shoes
+      ctx.fillStyle = '#b45309';
+      ctx.fillRect(x + 8, y + 51 - legOffset, 10, 5);
+      ctx.fillRect(x + 25, y + 51 + legOffset, 10, 5);
+
+      // Royal Sherwani Coat (Ivory & Gold with Maroon Dupatta)
+      ctx.fillStyle = '#fef3c7';
+      ctx.beginPath();
+      ctx.roundRect(x + 6, y + 18, 30, 24, 5);
+      ctx.fill();
+
+      // Maroon Royal Shawl / Dupatta across chest
+      ctx.fillStyle = '#991b1b';
+      ctx.beginPath();
+      ctx.moveTo(x + 6, y + 19);
+      ctx.lineTo(x + 28, y + 42);
+      ctx.lineTo(x + 34, y + 42);
+      ctx.lineTo(x + 12, y + 19);
+      ctx.fill();
+
+      // Gold buttons / necklace
+      ctx.fillStyle = '#d97706';
+      ctx.beginPath();
+      ctx.arc(x + 20, y + 25, 2, 0, Math.PI * 2);
+      ctx.arc(x + 20, y + 30, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Head / Face: Custom Uploaded Photo or Illustrated Avatar
+      const headRadius = 15;
+      const headCenterX = x + 21;
+      const headCenterY = y + 7;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(headCenterX, headCenterY, headRadius, 0, Math.PI * 2);
+      ctx.clip();
+
+      if (customGroomImg && customGroomImg.complete) {
+        ctx.drawImage(
+          customGroomImg,
+          headCenterX - headRadius,
+          headCenterY - headRadius,
+          headRadius * 2,
+          headRadius * 2
+        );
+      } else {
+        // Default Illustrated Groom Face
+        ctx.fillStyle = '#fbcfe8'; // Skin tone
+        ctx.fillRect(headCenterX - headRadius, headCenterY - headRadius, headRadius * 2, headRadius * 2);
+        // Beard & Mustache
+        ctx.fillStyle = '#1e1b4b';
+        ctx.beginPath();
+        ctx.arc(headCenterX, headCenterY + 4, 10, 0, Math.PI);
+        ctx.fill();
+        // Eyes
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(headCenterX - 6, headCenterY - 2, 3, 3);
+        ctx.fillRect(headCenterX + 3, headCenterY - 2, 3, 3);
+      }
+      ctx.restore();
+
+      // Head Gold Border Frame
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.arc(headCenterX, headCenterY, headRadius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Royal Turban / Safa on Groom's Head
+      ctx.fillStyle = '#dc2626'; // Red/Saffron Pagri
+      ctx.beginPath();
+      ctx.ellipse(headCenterX, y - 2, 16, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Kalgi / Brooch feather on Turban
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.moveTo(headCenterX - 2, y - 8);
+      ctx.lineTo(headCenterX, y - 16);
+      ctx.lineTo(headCenterX + 2, y - 8);
+      ctx.fill();
+      ctx.fillStyle = '#22c55e';
+      ctx.beginPath();
+      ctx.arc(headCenterX, y - 5, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Draw Wedding Mandap & Waiting Bride
+    function drawMandap(x, groundY) {
+      ctx.save();
+
+      // Mandap Pillars (Golden pillars draped in flowers)
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(x - 30, groundY - 150, 10, 150);
+      ctx.fillRect(x + 75, groundY - 150, 10, 150);
+
+      // Floral Garlands wrap around pillars
+      ctx.fillStyle = '#ea580c';
+      for (let pY = groundY - 140; pY < groundY; pY += 18) {
+        ctx.beginPath();
+        ctx.arc(x - 25, pY, 6, 0, Math.PI * 2);
+        ctx.arc(x + 80, pY, 6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Mandap Dome / Canopy Roof
+      ctx.fillStyle = '#be123c';
+      ctx.beginPath();
+      ctx.moveTo(x - 45, groundY - 150);
+      ctx.quadraticCurveTo(x + 27, groundY - 200, x + 100, groundY - 150);
+      ctx.lineTo(x + 90, groundY - 140);
+      ctx.lineTo(x - 35, groundY - 140);
+      ctx.closePath();
+      ctx.fill();
+
+      // Golden scalloped trim on canopy
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Hanging Marigold / Chandelier Bells
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(x + 28, groundY - 145, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sacred Wedding Fire (Havan Kund) in Center
+      ctx.fillStyle = '#b45309';
+      ctx.fillRect(x + 18, groundY - 18, 20, 18);
+      // Flame animation
+      const flameH = 14 + Math.sin(Date.now() * 0.015) * 4;
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.moveTo(x + 20, groundY - 18);
+      ctx.lineTo(x + 28, groundY - 18 - flameH);
+      ctx.lineTo(x + 36, groundY - 18);
+      ctx.fill();
+
+      // Draw Bride Ruby Waiting by Mandap
+      drawBride(x + 48, groundY - 55);
+
+      ctx.restore();
+    }
+
+    function drawBride(bx, by) {
+      // Bride Lehenga (Regal Crimson & Gold)
+      ctx.fillStyle = '#e11d48';
+      ctx.beginPath();
+      ctx.moveTo(bx + 16, by + 18);
+      ctx.lineTo(bx + 34, by + 54);
+      ctx.lineTo(bx - 2, by + 54);
+      ctx.closePath();
+      ctx.fill();
+
+      // Golden zari borders on lehenga
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Choli / Blouse
+      ctx.fillStyle = '#be123c';
+      ctx.fillRect(bx + 6, by + 18, 20, 16);
+
+      // Bridal Dupatta Veil draping around
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.7)';
+      ctx.beginPath();
+      ctx.moveTo(bx + 3, by + 2);
+      ctx.quadraticCurveTo(bx + 30, by + 8, bx + 34, by + 48);
+      ctx.lineTo(bx + 26, by + 48);
+      ctx.closePath();
+      ctx.fill();
+
+      // Bride Face: Custom Uploaded Photo or Default Avatar
+      const headRadius = 14;
+      const headCenterX = bx + 16;
+      const headCenterY = by + 6;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(headCenterX, headCenterY, headRadius, 0, Math.PI * 2);
+      ctx.clip();
+
+      if (customBrideImg && customBrideImg.complete) {
+        ctx.drawImage(
+          customBrideImg,
+          headCenterX - headRadius,
+          headCenterY - headRadius,
+          headRadius * 2,
+          headRadius * 2
+        );
+      } else {
+        // Default Illustrated Bride Face
+        ctx.fillStyle = '#fed7aa';
+        ctx.fillRect(headCenterX - headRadius, headCenterY - headRadius, headRadius * 2, headRadius * 2);
+        // Bindi & Maang Tikka
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath();
+        ctx.arc(headCenterX, headCenterY - 3, 2, 0, Math.PI * 2);
+        ctx.fill();
+        // Eyes
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(headCenterX - 5, headCenterY, 3, 2);
+        ctx.fillRect(headCenterX + 2, headCenterY, 3, 2);
+      }
+      ctx.restore();
+
+      // Golden Maang Tikka & Jewelry
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.arc(headCenterX, headCenterY, headRadius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(headCenterX, headCenterY - headRadius + 2, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Bride Name Tag
+      ctx.font = 'bold 9px Cinzel, serif';
+      ctx.fillStyle = '#fde047';
+      ctx.fillText('RUBY', bx + 6, by - 6);
+    }
+
+    // Draw Obstacles (Laddoo sweet & Firecrackers)
+    function drawObstacle(obs) {
+      ctx.save();
+      if (obs.type === 'laddoo') {
+        // Motichoor Laddoo Sweet with silver foil (Vark)
+        const cx = obs.x + obs.width / 2;
+        const cy = obs.y + obs.height / 2;
+        ctx.translate(cx, cy);
+        ctx.rotate(obs.rotation);
+
+        ctx.fillStyle = '#ea580c';
+        ctx.beginPath();
+        ctx.arc(0, 0, obs.width / 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pistachio & silver vark specks
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(-4, -3, 2.5, 0, Math.PI * 2);
+        ctx.arc(3, 4, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#22c55e'; // Pista
+        ctx.fillRect(-2, 2, 3, 2);
+      } else {
+        // Firecracker Patakha Rocket
+        ctx.fillStyle = '#dc2626';
+        ctx.fillRect(obs.x, obs.y + 6, obs.width, obs.height - 6);
+        // Rocket cone
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.moveTo(obs.x, obs.y + 6);
+        ctx.lineTo(obs.x + obs.width / 2, obs.y);
+        ctx.lineTo(obs.x + obs.width, obs.y + 6);
+        ctx.fill();
+        // Spark fuse on top
+        ctx.strokeStyle = '#f97316';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(obs.x + obs.width / 2, obs.y);
+        ctx.lineTo(obs.x + obs.width / 2, obs.y - 4);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Draw Collectible Wedding Ring
+    function drawRing(item) {
+      ctx.save();
+      const bob = Math.sin((Date.now() * 0.006) + item.bobOffset) * 4;
+      const cy = item.y + bob;
+
+      // Golden Engagement Band
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.arc(item.x + 11, cy + 11, 8.5, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Diamond on top
+      ctx.fillStyle = '#e0f2fe';
+      ctx.beginPath();
+      ctx.moveTo(item.x + 11, cy + 1);
+      ctx.lineTo(item.x + 14, cy + 5);
+      ctx.lineTo(item.x + 11, cy + 8);
+      ctx.lineTo(item.x + 8, cy + 5);
+      ctx.closePath();
+      ctx.fill();
+
+      // Diamond sparkle
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(item.x + 11, cy + 5, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // --- Game Lifecycle ---
+    function resetGame() {
+      distanceTraveled = 0;
+      score = 0;
+      ringsCollected = 0;
+      lives = 3;
+      speed = 4.2;
+      invulnerableTimer = 0;
+      mandapReached = false;
+      gameEnded = false;
+      obstacles = [];
+      collectibles = [];
+      particles = [];
+      floatingTexts = [];
+      player.reset();
+      updateHUD();
+      saveDateOverlay.classList.add('hidden');
+      saveDateOverlay.classList.remove('flex');
+    }
+
+    function startGame() {
+      resetGame();
+      startOverlay.classList.add('hidden');
+      gameRunning = true;
+      sound.init();
+      sound.startBGM();
+    }
+
+    startGameBtn.addEventListener('click', startGame);
+
+    directInviteBtn.addEventListener('click', () => {
+      startOverlay.classList.add('hidden');
+      triggerSaveTheDate();
+    });
+
+    skipBtn.addEventListener('click', () => {
+      triggerSaveTheDate();
+    });
+
+    playAgainBtn.addEventListener('click', () => {
+      resetGame();
+      gameRunning = true;
+      sound.startBGM();
+    });
+
+    // Audio button toggle
+    audioToggleBtn.addEventListener('click', () => {
+      const isMuted = sound.toggleMute();
+      if (isMuted) {
+        audioIcon.className = 'fa-solid fa-volume-xmark text-xs text-rose-400';
+        showToast('Sound Muted');
+      } else {
+        audioIcon.className = 'fa-solid fa-volume-high text-xs text-amber-300';
+        showToast('Sound On 🎵');
+      }
+    });
+
+    // Main Game Loop
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+    requestAnimationFrame(gameLoop);
+
+    // --- Calendar & Sharing Integrations ---
+    // 1. Google Calendar URL Generator
+    addCalendarBtn.addEventListener('click', () => {
+      // Event: Dec 8 2026, 10:00 AM IST to Dec 9 2026, 11:59 PM IST
+      const title = encodeURIComponent("Ruby & Adarsh's Wedding (#RubDarsh)");
+      const details = encodeURIComponent("Join us to celebrate the wedding celebrations of Ruby & Adarsh! Save the dates: 8th & 9th December 2026 in Udaipur.");
+      const location = encodeURIComponent("Udaipur, Rajasthan, India");
+      const dates = "20261208T043000Z/20261209T182900Z"; // UTC representation
+      const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
+      window.open(gcalUrl, '_blank');
+    });
+
+    // 2. ICS File Generation (Apple Calendar, Outlook)
+    icsDownloadBtn.addEventListener('click', () => {
+      const icsContent = 
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//RubDarsh Wedding//Baraat Run//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+SUMMARY:Ruby & Adarsh's Wedding (#RubDarsh)
+DESCRIPTION:Save the Date for Ruby & Adarsh's Wedding celebration on 8th & 9th December 2026 in Udaipur!
+LOCATION:Udaipur, Rajasthan, India
+DTSTART:20261208T043000Z
+DTEND:20261209T183000Z
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR`;
+
+      const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.setAttribute('download', 'Ruby_Adarsh_Wedding.ics');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Calendar event downloaded (.ics)');
+    });
+
+    // 3. WhatsApp Pre-filled Sharing
+    whatsappShareBtn.addEventListener('click', () => {
+      const shareUrl = window.location.href;
+      const shareMessage = `💍 *Save The Date: Ruby & Adarsh (#RubDarsh)* 💍\n\nWe are getting married on *8th & 9th December 2026* in Udaipur, Rajasthan!\n\nHelp Adarsh complete the Baraat Run and unlock our wedding invite here: \n${shareUrl}`;
+      const waLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
+      window.open(waLink, '_blank');
+    });
+
+    // --- Custom Photos / Avatar Personalization Modal ---
+    avatarModalBtn.addEventListener('click', () => {
+      avatarModal.classList.remove('hidden');
+      avatarModal.classList.add('flex');
+    });
+
+    closeAvatarModal.addEventListener('click', () => {
+      avatarModal.classList.add('hidden');
+      avatarModal.classList.remove('flex');
+    });
+
+    function handleImageFile(input, callback) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            callback(img, e.target.result);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    groomFileInput.addEventListener('change', function() {
+      handleImageFile(this, (img, dataUrl) => {
+        customGroomImg = img;
+        document.getElementById('settings-groom-preview').src = dataUrl;
+        document.getElementById('settings-groom-preview').classList.remove('hidden');
+        document.getElementById('settings-groom-fallback').classList.add('hidden');
+        
+        // Update previews
+        document.getElementById('intro-groom-preview').src = dataUrl;
+        document.getElementById('intro-groom-preview').classList.remove('hidden');
+        document.getElementById('intro-groom-emoji').classList.add('hidden');
+
+        document.getElementById('reveal-groom-img').src = dataUrl;
+        document.getElementById('reveal-groom-img').classList.remove('hidden');
+        document.getElementById('reveal-groom-emoji').classList.add('hidden');
+      });
+    });
+
+    brideFileInput.addEventListener('change', function() {
+      handleImageFile(this, (img, dataUrl) => {
+        customBrideImg = img;
+        document.getElementById('settings-bride-preview').src = dataUrl;
+        document.getElementById('settings-bride-preview').classList.remove('hidden');
+        document.getElementById('settings-bride-fallback').classList.add('hidden');
+
+        // Update previews
+        document.getElementById('intro-bride-preview').src = dataUrl;
+        document.getElementById('intro-bride-preview').classList.remove('hidden');
+        document.getElementById('intro-bride-emoji').classList.add('hidden');
+
+        document.getElementById('reveal-bride-img').src = dataUrl;
+        document.getElementById('reveal-bride-img').classList.remove('hidden');
+        document.getElementById('reveal-bride-emoji').classList.add('hidden');
+      });
+    });
+
+    savePhotosBtn.addEventListener('click', () => {
+      avatarModal.classList.add('hidden');
+      avatarModal.classList.remove('flex');
+      showToast('Couple photos updated! ✨');
+    });
+
+    resetPhotosBtn.addEventListener('click', () => {
+      customGroomImg = null;
+      customBrideImg = null;
+      document.getElementById('settings-groom-preview').classList.add('hidden');
+      document.getElementById('settings-groom-fallback').classList.remove('hidden');
+      document.getElementById('settings-bride-preview').classList.add('hidden');
+      document.getElementById('settings-bride-fallback').classList.remove('hidden');
+
+      document.getElementById('intro-groom-preview').classList.add('hidden');
+      document.getElementById('intro-groom-emoji').classList.remove('hidden');
+      document.getElementById('intro-bride-preview').classList.add('hidden');
+      document.getElementById('intro-bride-emoji').classList.remove('hidden');
+
+      document.getElementById('reveal-groom-img').classList.add('hidden');
+      document.getElementById('reveal-groom-emoji').classList.remove('hidden');
+      document.getElementById('reveal-bride-img').classList.add('hidden');
+      document.getElementById('reveal-bride-emoji').classList.remove('hidden');
+
+      avatarModal.classList.add('hidden');
+      avatarModal.classList.remove('flex');
+      showToast('Reset to default illustrations');
+    });
+  </script>
+</body>
+</html>
