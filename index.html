@@ -246,7 +246,7 @@
           </div>
           <div class="text-xs text-amber-200/90 mt-1 flex items-center justify-center gap-1">
             <i class="fa-solid fa-location-dot text-rose-500"></i>
-            <span>Udaipur, Rajasthan, India</span>
+            <span>Prayagraj, Uttar Pradesh, India</span>
           </div>
           <div class="text-[10px] text-purple-300/80 mt-1">
             (Formal invitation card &amp; event itinerary to follow)
@@ -359,7 +359,7 @@
     /**
      * BARAAT RUN - Interactive HTML5 Wedding Game
      * Couple: Ruby & Adarsh (#RubDarsh)
-     * Dates: 8th & 9th December 2026 | Udaipur, Rajasthan
+     * Dates: 8th & 9th December 2026 | Prayagraj, Uttar Pradesh
      */
 
     // --- Audio Synthesizer via Web Audio API (Zero External Assets) ---
@@ -1546,8 +1546,8 @@
     addCalendarBtn.addEventListener('click', () => {
       // Event: Dec 8 2026, 10:00 AM IST to Dec 9 2026, 11:59 PM IST
       const title = encodeURIComponent("Ruby & Adarsh's Wedding (#RubDarsh)");
-      const details = encodeURIComponent("Join us to celebrate the wedding celebrations of Ruby & Adarsh! Save the dates: 8th & 9th December 2026 in Udaipur.");
-      const location = encodeURIComponent("Udaipur, Rajasthan, India");
+      const details = encodeURIComponent("Join us to celebrate the wedding celebrations of Ruby & Adarsh! Save the dates: 8th & 9th December 2026 in Prayagraj.");
+      const location = encodeURIComponent("Prayagraj, Uttar Pradesh, India");
       const dates = "20261208T043000Z/20261209T182900Z"; // UTC representation
       const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
       window.open(gcalUrl, '_blank');
@@ -1562,8 +1562,8 @@ PRODID:-//RubDarsh Wedding//Baraat Run//EN
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
 SUMMARY:Ruby & Adarsh's Wedding (#RubDarsh)
-DESCRIPTION:Save the Date for Ruby & Adarsh's Wedding celebration on 8th & 9th December 2026 in Udaipur!
-LOCATION:Udaipur, Rajasthan, India
+DESCRIPTION:Save the Date for Ruby & Adarsh's Wedding celebration on 8th & 9th December 2026 in Prayagraj!
+LOCATION:Prayagraj, Uttar Pradesh, India
 DTSTART:20261208T043000Z
 DTEND:20261209T183000Z
 STATUS:CONFIRMED
@@ -1583,7 +1583,7 @@ END:VCALENDAR`;
     // 3. WhatsApp Pre-filled Sharing
     whatsappShareBtn.addEventListener('click', () => {
       const shareUrl = window.location.href;
-      const shareMessage = `💍 *Save The Date: Ruby & Adarsh (#RubDarsh)* 💍\n\nWe are getting married on *8th & 9th December 2026* in Udaipur, Rajasthan!\n\nHelp Adarsh complete the Baraat Run and unlock our wedding invite here: \n${shareUrl}`;
+      const shareMessage = `💍 *Save The Date: Ruby & Adarsh (#RubDarsh)* 💍\n\nWe are getting married on *8th & 9th December 2026* in Prayagraj, Uttar Pradesh!\n\nHelp Adarsh complete the Baraat Run and unlock our wedding invite here: \n${shareUrl}`;
       const waLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
       window.open(waLink, '_blank');
     });
