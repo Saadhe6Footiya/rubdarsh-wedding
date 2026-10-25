@@ -81,7 +81,7 @@
           </button>
           
           <!-- Avatar Settings / Customise photos -->
-          <button id="avatar-modal-btn" class="w-8 h-8 rounded-full bg-[#2a1347]/90 text-amber-300 border border-amber-500/30 flex items-center justify-center shadow-md active:scale-95 transition-transform" title="Customize Face Photos">
+          <button id="avatar-modal-btn" class="hidden w-8 h-8 rounded-full bg-[#2a1347]/90 text-amber-300 border border-amber-500/30 flex items-center justify-center shadow-md active:scale-95 transition-transform" title="Customize Face Photos">
             <i class="fa-solid fa-camera text-xs"></i>
           </button>
 
@@ -556,10 +556,31 @@
     const savePhotosBtn = document.getElementById('save-photos-btn');
     const resetPhotosBtn = document.getElementById('reset-photos-btn');
 
-    // Avatars
-    let customGroomImg = null;
-    let customBrideImg = null;
+   // Avatars loaded directly from the repo
+let customGroomImg = new Image();
+customGroomImg.src = 'adarsh.png';
 
+let customBrideImg = new Image();
+customBrideImg.src = 'ruby.png';
+
+window.addEventListener('DOMContentLoaded', () => {
+  // Intro Screen Previews
+  const introGroom = document.getElementById('intro-groom-preview');
+  const introBride = document.getElementById('intro-bride-preview');
+  if (introGroom) { introGroom.src = 'adarsh.png'; introGroom.classList.remove('hidden'); }
+  if (introBride) { introBride.src = 'ruby.png'; introBride.classList.remove('hidden'); }
+  document.getElementById('intro-groom-emoji')?.classList.add('hidden');
+  document.getElementById('intro-bride-emoji')?.classList.add('hidden');
+
+  // Reveal Finale Previews
+  const revealGroom = document.getElementById('reveal-groom-img');
+  const revealBride = document.getElementById('reveal-bride-img');
+  if (revealGroom) { revealGroom.src = 'adarsh.png'; revealGroom.classList.remove('hidden'); }
+  if (revealBride) { revealBride.src = 'ruby.png'; revealBride.classList.remove('hidden'); }
+  document.getElementById('reveal-groom-emoji')?.classList.add('hidden');
+  document.getElementById('reveal-bride-emoji')?.classList.add('hidden');
+});
+    
     // Toast helper
     function showToast(msg) {
       toast.textContent = msg;
